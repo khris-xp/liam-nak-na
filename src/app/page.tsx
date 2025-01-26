@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import Input from "@/components/Input/Input";
 import axios from "axios";
 
+//TODO: Implement Color and UI for follow document
+
 function SideInput({
   sideNumber,
   value,
