@@ -1,101 +1,126 @@
-import Image from "next/image";
+"use client";
+
+import React, { useState } from "react";
+import Input from "@/components/Input/Input";
+import axios from "axios";
+
+function SideInput({
+  sideNumber,
+  value,
+  onChange,
+  error,
+}: {
+  sideNumber: number;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  error: string;
+}) {
+  return (
+    <div className="flex gap-4 mb-4">
+      <label className="w-20 font-medium pt-2">Side {sideNumber}</label>
+      <div className="flex-1">
+        <Input
+          type="number"
+          name={`side${sideNumber}`}
+          value={value}
+          onChange={onChange}
+          error={error}
+          className="w-full p-3 border rounded bg-yellow-100 border-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+        />
+      </div>
+    </div>
+  );
+}
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [sides, setSides] = useState({
+    side1: "",
+    side2: "",
+    side3: "",
+  });
+  const [result, setResult] = useState("");
+  const [errors, setErrors] = useState({
+    side1: "",
+    side2: "",
+    side3: "",
+  });
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSides({
+      ...sides,
+      [e.target.name]: e.target.value,
+    });
+    setErrors({
+      ...errors,
+      [e.target.name]: "",
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const newErrors = {
+      side1: sides.side1 ? "" : "Please fill out this field",
+      side2: sides.side2 ? "" : "Please fill out this field",
+      side3: sides.side3 ? "" : "Please fill out this field",
+    };
+    setErrors(newErrors);
+
+    if (!sides.side1 || !sides.side2 || !sides.side3) {
+      return;
+    }
+
+    axios
+      .post("https://liam-nak-na-api-production.up.railway.app/triangle", {
+        width: sides.side1,
+        height: sides.side2,
+        base: sides.side3,
+      })
+      .then((res) => {
+        setResult(`${res.data.data.EnglishName} / ${res.data.data.ThaiName}`);
+      });
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <div className="bg-purple-100 p-8 rounded-lg shadow-md w-full max-w-md">
+        <h1 className="text-2xl font-bold mb-6 text-center">
+          Enter the length of sides
+        </h1>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <SideInput
+            sideNumber={1}
+            value={sides.side1}
+            onChange={handleChange}
+            error={errors.side1}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
+          <SideInput
+            sideNumber={2}
+            value={sides.side2}
+            onChange={handleChange}
+            error={errors.side2}
           />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
+          <SideInput
+            sideNumber={3}
+            value={sides.side3}
+            onChange={handleChange}
+            error={errors.side3}
           />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+          <div className="flex gap-4 mt-6">
+            <button
+              type="submit"
+              className="bg-yellow-100 border-2 border-yellow-300 px-4 py-2 rounded hover:bg-yellow-200 transition-colors"
+            >
+              Enter
+            </button>
+
+            <div className="flex-1 p-2 bg-yellow-100 border-2 border-yellow-300 rounded">
+              {result}
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
