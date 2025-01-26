@@ -27,7 +27,7 @@ function SideInput({
           value={value}
           onChange={onChange}
           error={error}
-          className="w-full p-3 border rounded bg-yellow-100 border-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+          className="w-full p-3 bg-yellow-300 border-2 border-black focus:outline-none focus:ring-2 focus:ring-yellow-400"
         />
       </div>
     </div>
@@ -84,7 +84,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="bg-purple-100 p-8 rounded-lg shadow-md w-full max-w-md">
+      <div className="bg-indigo-100 p-8 rounded-lg shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold mb-6 text-center">
           Enter the length of sides
         </h1>
@@ -109,17 +109,21 @@ export default function Home() {
             error={errors.side3}
           />
 
-          <div className="flex gap-4 mt-6">
+          <div className="flex gap-6 mt-6 text-2xl font-bold">
             <button
               type="submit"
-              className="bg-yellow-100 border-2 border-yellow-300 px-4 py-2 rounded hover:bg-yellow-200 transition-colors"
+              className="mt-10 bg-yellow-300 border-2 rounded-lg border-black px-1 py-2 h-12 hover:bg-red-100 transition-colors"
             >
               Enter
             </button>
 
-            <div className="flex-1 p-2 bg-yellow-100 border-2 border-yellow-300 rounded">
+
+            <div className="flex-grow p-2 text-2xl text-center">Result
+            <div className="flex-1 p-1 text-sm bg-yellow-300 border-2 border-black rounded-lg h-12">
               {result}
             </div>
+            </div>
+
           </div>
         </form>
       </div>
